@@ -36,6 +36,21 @@ public class SanPhamController {
         return ResponseEntity.ok("Thêm sản phẩm thành công!");
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteSanPham(@PathVariable Integer id) {
+        if (!sanPhamRepo.existsById(id)) {
+            return ResponseEntity.badRequest().body("Sản phẩm không tồn tại!");
+        }
+
+        try {
+            sanPhamRepo.deleteById(id);
+            return ResponseEntity.ok("Xoá sản phẩm thành công!");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Lỗi khi xoá sản phẩm: " + e.getMessage());
+        }
+    }
+
+
     private SanPhamResponse mapSanPhamToResponse(SanPham sanPham) {
         return new SanPhamResponse(
                 sanPham.getId(),
