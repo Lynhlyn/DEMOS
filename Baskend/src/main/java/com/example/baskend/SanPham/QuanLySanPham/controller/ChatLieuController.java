@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("chat-lieu")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class ChatLieuController {
     @Autowired
     ChatLieuRepo chatLieuRepo;

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -17,7 +17,10 @@ const fetchSanPham = async () => {
     loading.value = true;
     errorMessage.value = "";
     try {
-        const response = await axios.get(urlSanPham);
+        const response = await axios.get(urlSanPham, {
+            params: { keyword: searchQuery.value }
+        });
+
         if (response.data && Array.isArray(response.data)) {
             sanPhamList.value = response.data.map(sp => ({
                 ...sp,
@@ -35,22 +38,20 @@ const fetchSanPham = async () => {
     }
 };
 
-// Lọc danh sách theo tìm kiếm
-const filteredSanPhamList = computed(() => {
-    return sanPhamList.value.filter(sp => 
-        sp.tenSanPham.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+// Gọi API tìm kiếm khi người dùng nhập vào ô tìm kiếm (có debounce nhẹ)
+watch(searchQuery, () => {
+    setTimeout(fetchSanPham, 300);
 });
 
 // Tính toán danh sách sản phẩm theo phân trang
 const paginatedSanPhamList = computed(() => {
     const startIndex = (currentPage.value - 1) * pageSize;
-    return filteredSanPhamList.value.slice(startIndex, startIndex + pageSize);
+    return sanPhamList.value.slice(startIndex, startIndex + pageSize);
 });
 
 // Tổng số trang
 const totalPages = computed(() => {
-    return Math.ceil(filteredSanPhamList.value.length / pageSize);
+    return Math.ceil(sanPhamList.value.length / pageSize);
 });
 
 // Chuyển trang
@@ -98,7 +99,7 @@ onMounted(fetchSanPham);
         <div class="mb-3 d-flex justify-content-between align-items-center">
             <div class="d-flex w-50">
                 <input v-model="searchQuery" class="form-control me-2" type="text" placeholder="Tìm kiếm sản phẩm theo tên..." />
-                <button class="btn btn-secondary">Tìm kiếm</button>
+                <button class="btn btn-secondary" @click="fetchSanPham">Tìm kiếm</button>
             </div>
             <button class="btn btn-success" @click="handleAddSanPham">Thêm mới</button>
         </div>

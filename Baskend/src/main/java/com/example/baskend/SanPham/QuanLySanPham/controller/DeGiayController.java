@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("de-giay")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class DeGiayController {
     @Autowired
     DeGiayRepo deGiayRepo;

@@ -41,10 +41,15 @@ const fetchDropdownData = async () => {
             axios.get(urlChatLieu),
             axios.get(urlDeGiay),
         ]);
-        danhMucList.value = resDanhMuc.data;
-        thuongHieuList.value = resThuongHieu.data;
-        chatLieuList.value = resChatLieu.data;
-        deGiayList.value = resDeGiay.data;
+
+        danhMucList.value = resDanhMuc.data.length ? resDanhMuc.data : [];
+        thuongHieuList.value = resThuongHieu.data.length ? resThuongHieu.data : [];
+        chatLieuList.value = resChatLieu.data.length ? resChatLieu.data : [];
+        deGiayList.value = resDeGiay.data.length ? resDeGiay.data : [];
+
+        if (!danhMucList.value.length || !thuongHieuList.value.length || !chatLieuList.value.length || !deGiayList.value.length) {
+            alert("Một số danh sách trống! Vui lòng kiểm tra API.");
+        }
     } catch (error) {
         console.error("Lỗi khi lấy dữ liệu combobox:", error);
         alert("Không thể tải dữ liệu danh mục, thương hiệu, chất liệu, đế giày!");
@@ -91,8 +96,13 @@ const handleAddSanPham = async () => {
     }
 };
 
+const goBack = () => {
+    router.go(-1);
+};
+
 onMounted(fetchDropdownData);
 </script>
+
 
 <template>
     <div class="p-4" style="min-height: 450px;">
@@ -165,10 +175,14 @@ onMounted(fetchDropdownData);
                 <!-- Thông báo lỗi API -->
                 <div v-if="errors.apiError" class="alert alert-danger">{{ errors.apiError }}</div>
 
-                <!-- Nút Thêm -->
-                <button type="submit" class="btn btn-primary" :disabled="isLoading">
-                    {{ isLoading ? "Đang xử lý..." : "Thêm sản phẩm" }}
-                </button>
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary" :disabled="isLoading">
+                        {{ isLoading ? "Đang xử lý..." : "Thêm sản phẩm" }}
+                    </button>
+                    <button type="button" class="btn btn-secondary" @click="router.go(-1)">
+                        Quay lại
+                    </button>
+                </div>
             </form>
         </div>
     </div>
