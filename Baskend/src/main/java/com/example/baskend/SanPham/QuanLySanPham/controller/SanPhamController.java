@@ -1,23 +1,36 @@
 package com.example.baskend.SanPham.QuanLySanPham.controller;
 
-import com.example.baskend.SanPham.QuanLySanPham.entity.SanPham;
-import com.example.baskend.SanPham.QuanLySanPham.repository.SanPhamRepo;
+import com.example.baskend.SanPham.QuanLySanPham.entity.*;
+import com.example.baskend.SanPham.QuanLySanPham.repository.*;
 import com.example.baskend.SanPham.QuanLySanPham.response.SanPhamResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/san-pham")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-
 public class SanPhamController {
     private final SanPhamRepo sanPhamRepo;
+    private final DanhMucRepo danhMucRepo;
+    private final ThuongHieuRepo thuongHieuRepo;
+    private final ChatLieuRepo chatLieuRepo;
+    private final DeGiayRepo deGiayRepo;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SanPham> getSanPhamById(@PathVariable Integer id) {
+        Optional<SanPham> sanPham = sanPhamRepo.findById(id);
+        return sanPham.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     @GetMapping("")
     public List<SanPhamResponse> getAllSanPham(@RequestParam(required = false) String keyword) {
@@ -39,7 +52,7 @@ public class SanPhamController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("addSP")
+    @PostMapping("/addSP")
     public ResponseEntity<?> createSanPham(@Valid @RequestBody SanPham sanPham) {
         sanPhamRepo.save(sanPham);
         return ResponseEntity.ok("Thêm sản phẩm thành công!");
@@ -56,11 +69,22 @@ public class SanPhamController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateSanPham(@PathVariable Integer id, @Valid @RequestBody SanPham sanPham) {
-        if (!sanPhamRepo.existsById(id)) {
+        Optional<SanPham> existingSanPhamOpt = sanPhamRepo.findById(id);
+        if (existingSanPhamOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Sản phẩm không tồn tại!");
         }
-        sanPham.setId(id);
-        sanPhamRepo.save(sanPham);
+
+        SanPham existingSanPham = existingSanPhamOpt.get();
+        existingSanPham.setTenSanPham(sanPham.getTenSanPham());
+        existingSanPham.setMoTa(sanPham.getMoTa());
+        existingSanPham.setDanhMuc(sanPham.getDanhMuc());
+        existingSanPham.setThuongHieu(sanPham.getThuongHieu());
+        existingSanPham.setChatLieu(sanPham.getChatLieu());
+        existingSanPham.setDeGiay(sanPham.getDeGiay());
+        existingSanPham.setTrangThai(sanPham.getTrangThai());
+        existingSanPham.setNgaySua(LocalDateTime.now());
+
+        sanPhamRepo.save(existingSanPham);
         return ResponseEntity.ok("Sửa sản phẩm thành công!");
     }
 
@@ -78,4 +102,25 @@ public class SanPhamController {
                 sanPham.getTrangThai()
         );
     }
+
+    @GetMapping("/danh-muc")
+    public List<DanhMuc> getAllDanhMuc() {
+        return danhMucRepo.findAll();
+    }
+
+    @GetMapping("/thuong-hieu")
+    public List<ThuongHieu> getAllThuongHieu() {
+        return thuongHieuRepo.findAll();
+    }
+
+    @GetMapping("/chat-lieu")
+    public List<ChatLieu> getAllChatLieu() {
+        return chatLieuRepo.findAll();
+    }
+
+    @GetMapping("/de-giay")
+    public List<DeGiay> getAllDeGiay() {
+        return deGiayRepo.findAll();
+    }
+
 }

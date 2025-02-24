@@ -27,34 +27,7 @@ const loading = ref(false);
 const errorMessage = ref("");
 const successMessage = ref("");
 
-const fetchSanPham = async () => {
-      if (!id) {
-            errorMessage.value = "ID sản phẩm không hợp lệ!";
-            return;
-      }
-      loading.value = true;
-      try {
-            const response = await axios.get(`${urlSanPham}/updateSP?id=${id}`);
-            if (response.data) {
-                  sanPham.value = {
-                        ...response.data,
-                        danhMuc: response.data.danhMuc?.id || null,
-                        thuongHieu: response.data.thuongHieu?.id || null,
-                        chatLieu: response.data.chatLieu?.id || null,
-                        deGiay: response.data.deGiay?.id || null,
-                        trangThai: response.data.trangThai,
-                  };
-            } else {
-                  throw new Error("Không tìm thấy sản phẩm!");
-            }
-      } catch (error) {
-            errorMessage.value = "Lỗi khi tải dữ liệu sản phẩm.";
-            console.error("API Error: ", error);
-      } finally {
-            loading.value = false;
-      }
-};
-
+// Load danh sách danh mục, thương hiệu, chất liệu, đế giày
 const fetchDropdownData = async () => {
       try {
             const [danhMucRes, thuongHieuRes, chatLieuRes, deGiayRes] = await Promise.all([
@@ -73,6 +46,37 @@ const fetchDropdownData = async () => {
       }
 };
 
+// Load dữ liệu sản phẩm theo ID
+const fetchSanPham = async () => {
+      if (!id) {
+            errorMessage.value = "ID sản phẩm không hợp lệ!";
+            return;
+      }
+      loading.value = true;
+      try {
+            const response = await axios.get(`${urlSanPham}/${id}`);
+            if (response.data) {
+                  sanPham.value = {
+                        tenSanPham: response.data.tenSanPham,
+                        moTa: response.data.moTa,
+                        danhMuc: response.data.danhMuc ? response.data.danhMuc.id : null,
+                        thuongHieu: response.data.thuongHieu ? response.data.thuongHieu.id : null,
+                        chatLieu: response.data.chatLieu ? response.data.chatLieu.id : null,
+                        deGiay: response.data.deGiay ? response.data.deGiay.id : null,
+                        trangThai: response.data.trangThai,
+                  };
+            } else {
+                  throw new Error("Không tìm thấy sản phẩm!");
+            }
+      } catch (error) {
+            errorMessage.value = "Lỗi khi tải dữ liệu sản phẩm.";
+            console.error("API Error: ", error);
+      } finally {
+            loading.value = false;
+      }
+};
+
+// Gửi yêu cầu cập nhật sản phẩm
 const updateSanPham = async () => {
       if (!sanPham.value.tenSanPham.trim()) {
             errorMessage.value = "Tên sản phẩm không được để trống!";
@@ -84,7 +88,15 @@ const updateSanPham = async () => {
       successMessage.value = "";
 
       try {
-            await axios.put(`${urlSanPham}/updateSP?id=${id}`, sanPham.value);
+            const payload = {
+                  ...sanPham.value,
+                  danhMuc: sanPham.value.danhMuc ? { id: sanPham.value.danhMuc } : null,
+                  thuongHieu: sanPham.value.thuongHieu ? { id: sanPham.value.thuongHieu } : null,
+                  chatLieu: sanPham.value.chatLieu ? { id: sanPham.value.chatLieu } : null,
+                  deGiay: sanPham.value.deGiay ? { id: sanPham.value.deGiay } : null,
+            };
+
+            await axios.put(`${urlSanPham}/${id}`, payload);
             successMessage.value = "Cập nhật sản phẩm thành công!";
             setTimeout(() => router.push("/admin/products/manage"), 1500);
       } catch (error) {
@@ -95,15 +107,15 @@ const updateSanPham = async () => {
       }
 };
 
-onMounted(() => {
-      fetchSanPham();
-      fetchDropdownData();
+onMounted(async () => {
+      await fetchDropdownData();
+      await fetchSanPham();
 });
 </script>
 
 <template>
       <div class="container mt-4">
-            <h2 class="text-center">Cập nhật sản phẩm</h2>
+            <h2 class="text-center">Cập nhật sản phẩm</h2>,
 
             <div v-if="loading" class="alert alert-info text-center">Đang tải dữ liệu...</div>
             <div v-if="errorMessage" class="alert alert-danger text-center">{{ errorMessage }}</div>
