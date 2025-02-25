@@ -24,6 +24,21 @@ const router = createRouter({
           component: () => import('../views/Admin/SanPham/QuanLySanPham/UpdateSanPham.vue'),
           props: true, // Truyền ID sản phẩm qua props
         },
+        {
+          path: 'products/details',
+          name: 'products-details',
+          component: () => import('../views/Admin/SanPham/SanPhamChiTiet/SanPhamChiTiet.vue'),
+        },
+        {
+          path: 'products/details/add-spct',
+          name: 'add-products-details',
+          component: () => import('../views/Admin/SanPham/SanPhamChiTiet/AddSPCT.vue'),
+        },
+        {
+          path: 'products/details/update-spct/:id',
+          name: 'update-products-details',
+          component: () => import('../views/Admin/SanPham/SanPhamChiTiet/UpdateSPCT.vue'),
+        }
       ],
     },
     {

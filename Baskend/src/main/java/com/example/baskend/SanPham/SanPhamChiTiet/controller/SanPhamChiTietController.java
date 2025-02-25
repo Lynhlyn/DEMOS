@@ -32,17 +32,37 @@ public class SanPhamChiTietController {
     private final SizeRepo sizeRepo;
 
     @GetMapping("")
-    public List<SanPhamChiTietResponse> getAllSanPhamChiTiet() {
-        return sanPhamChiTietRepo.findAll().stream()
+    public ResponseEntity<List<SanPhamChiTietResponse>> getAllSanPhamChiTiet(
+            @RequestParam(required = false, defaultValue = "") String keyword) {
+
+        List<SanPhamChiTiet> sanPhamChiTietList;
+
+        if (keyword.trim().isEmpty()) {
+            sanPhamChiTietList = sanPhamChiTietRepo.findAll();
+        } else {
+            sanPhamChiTietList = sanPhamChiTietRepo.searchByTenSanPham(keyword.trim());
+        }
+
+        List<SanPhamChiTietResponse> responseList = sanPhamChiTietList.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
     }
 
     @GetMapping("/search")
-    public List<SanPhamChiTietResponse> searchSanPhamChiTiet(@RequestParam String keyword) {
-        return sanPhamChiTietRepo.findBySanPham_TenSanPhamContainingIgnoreCase(keyword).stream()
+    public ResponseEntity<List<SanPhamChiTietResponse>> searchSanPhamChiTiet(
+            @RequestParam(required = false, defaultValue = "") String keyword) {
+
+        List<SanPhamChiTiet> sanPhamChiTietList = keyword.trim().isEmpty()
+                ? sanPhamChiTietRepo.findAll()
+                : sanPhamChiTietRepo.searchByTenSanPham(keyword);
+
+        List<SanPhamChiTietResponse> responseList = sanPhamChiTietList.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
     }
 
     @PostMapping("/add")
