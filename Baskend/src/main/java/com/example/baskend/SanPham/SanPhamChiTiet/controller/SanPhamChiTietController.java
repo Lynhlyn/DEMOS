@@ -35,28 +35,9 @@ public class SanPhamChiTietController {
     public ResponseEntity<List<SanPhamChiTietResponse>> getAllSanPhamChiTiet(
             @RequestParam(required = false, defaultValue = "") String keyword) {
 
-        List<SanPhamChiTiet> sanPhamChiTietList;
-
-        if (keyword.trim().isEmpty()) {
-            sanPhamChiTietList = sanPhamChiTietRepo.findAll();
-        } else {
-            sanPhamChiTietList = sanPhamChiTietRepo.searchByTenSanPham(keyword.trim());
-        }
-
-        List<SanPhamChiTietResponse> responseList = sanPhamChiTietList.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(responseList);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<SanPhamChiTietResponse>> searchSanPhamChiTiet(
-            @RequestParam(required = false, defaultValue = "") String keyword) {
-
         List<SanPhamChiTiet> sanPhamChiTietList = keyword.trim().isEmpty()
                 ? sanPhamChiTietRepo.findAll()
-                : sanPhamChiTietRepo.searchByTenSanPham(keyword);
+                : sanPhamChiTietRepo.searchByTenSanPham(keyword.trim());
 
         List<SanPhamChiTietResponse> responseList = sanPhamChiTietList.stream()
                 .map(this::mapToResponse)
@@ -65,8 +46,32 @@ public class SanPhamChiTietController {
         return ResponseEntity.ok(responseList);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/add-spct")
     public ResponseEntity<?> createSanPhamChiTiet(@Valid @RequestBody SanPhamChiTiet sanPhamChiTiet) {
+        if (sanPhamChiTiet.getSanPham() == null || sanPhamChiTiet.getMauSac() == null ||
+                sanPhamChiTiet.getSize() == null || sanPhamChiTiet.getMaSPCT() == null || sanPhamChiTiet.getMaSPCT().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Thiếu thông tin sản phẩm, màu sắc, size hoặc mã sản phẩm!");
+        }
+
+        Optional<SanPham> sanPhamOpt = sanPhamRepo.findById(sanPhamChiTiet.getSanPham().getId());
+        Optional<MauSac> mauSacOpt = mauSacRepo.findById(sanPhamChiTiet.getMauSac().getId());
+        Optional<Size> sizeOpt = sizeRepo.findById(sanPhamChiTiet.getSize().getId());
+        Optional<KhuyenMai> khuyenMaiOpt = (sanPhamChiTiet.getKhuyenMai() != null && sanPhamChiTiet.getKhuyenMai().getId() != null)
+                ? khuyenMaiRepo.findById(sanPhamChiTiet.getKhuyenMai().getId()) : Optional.empty();
+
+        if (sanPhamOpt.isEmpty() || mauSacOpt.isEmpty() || sizeOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Sản phẩm, màu sắc hoặc size không hợp lệ!");
+        }
+
+        if (sanPhamChiTiet.getGiaBan() <= 0 || sanPhamChiTiet.getSoLuong() < 0) {
+            return ResponseEntity.badRequest().body("Giá bán phải lớn hơn 0, số lượng không được âm!");
+        }
+
+        sanPhamChiTiet.setSanPham(sanPhamOpt.get());
+        sanPhamChiTiet.setMauSac(mauSacOpt.get());
+        sanPhamChiTiet.setSize(sizeOpt.get());
+        sanPhamChiTiet.setKhuyenMai(khuyenMaiOpt.orElse(null));
+
         sanPhamChiTietRepo.save(sanPhamChiTiet);
         return ResponseEntity.ok("Thêm sản phẩm chi tiết thành công!");
     }
@@ -77,7 +82,13 @@ public class SanPhamChiTietController {
         if (existingSPCTOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Sản phẩm chi tiết không tồn tại!");
         }
+
         SanPhamChiTiet existingSPCT = existingSPCTOpt.get();
+
+        if (sanPhamChiTiet.getGiaBan() <= 0 || sanPhamChiTiet.getSoLuong() < 0) {
+            return ResponseEntity.badRequest().body("Giá bán phải lớn hơn 0, số lượng không được âm!");
+        }
+
         existingSPCT.setMauSac(sanPhamChiTiet.getMauSac());
         existingSPCT.setKhuyenMai(sanPhamChiTiet.getKhuyenMai());
         existingSPCT.setSize(sanPhamChiTiet.getSize());
@@ -125,8 +136,8 @@ public class SanPhamChiTietController {
                 spct.getMaSPCT(),
                 spct.getSanPham().getTenSanPham(),
                 spct.getMauSac().getTenMau(),
-                khuyenMai != null ? khuyenMai.getTenKhuyenMai() : null,
-                khuyenMai != null ? khuyenMai.getPhanTramGiamGia() : null,
+                khuyenMai != null ? khuyenMai.getTenKhuyenMai() : "Không có khuyến mãi",
+                khuyenMai != null ? khuyenMai.getPhanTramGiamGia() : 0F,
                 khuyenMai != null ? khuyenMai.getNgayBatDau() : null,
                 khuyenMai != null ? khuyenMai.getNgayKetThuc() : null,
                 spct.getSize().getTenSize(),

@@ -85,6 +85,7 @@ const handleAddSanPham = async () => {
 
     try {
         const response = await axios.post(urlSanPham, newSanPham);
+        
         console.log("Thêm sản phẩm thành công:", response.data);
         alert("Thêm sản phẩm thành công!");
         router.push('/admin/products/manage');

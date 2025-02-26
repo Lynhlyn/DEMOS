@@ -36,7 +36,7 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_mau_sac", referencedColumnName = "id")
     private MauSac mauSac;
 
-    @NotNull(message = "Khuyến mại không được để trống")
+    @NotNull(message = "Khuyến mãi không được để trống")
     @ManyToOne
     @JoinColumn(name = "id_khuyen_mai", referencedColumnName = "id")
     private KhuyenMai khuyenMai;

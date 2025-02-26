@@ -36,6 +36,8 @@ const fetchSanPhamChiTiet = async (keyword = "") => {
 
                         return {
                               ...sp,
+                              tenKhuyenMai: sp.tenKhuyenMai || "Không có",
+                              phanTramGiamGia: sp.phanTramGiamGia ? `${sp.phanTramGiamGia}` : "0%",
                               ngayBatDau: ngayBatDau ? ngayBatDau.toLocaleDateString("vi-VN") : "Không có",
                               ngayKetThuc: ngayKetThuc ? ngayKetThuc.toLocaleDateString("vi-VN") : "Không có",
                               ngayTao: sp.ngayTao ? new Date(sp.ngayTao).toLocaleDateString("vi-VN") : "Không có",
