@@ -38,7 +38,20 @@ const router = createRouter({
           path: 'products/details/update-spct/:id',
           name: 'update-products-details',
           component: () => import('../views/Admin/SanPham/SanPhamChiTiet/UpdateSPCT.vue'),
-        }
+        },
+
+        //  Khach hang
+
+        {
+          path: "/admin/customers",
+          name: "customers",
+          component: () => import("../views/Admin/KhachHang/QuanLyKhachHang/KhachHang.vue")
+        },
+        {
+          path: 'customers/manage/add-khachhang',
+          name: 'admin-add-customer',
+          component: () => import('../views/Admin/KhachHang/QuanLyKhachHang/AddKhachHang.vue'),
+        },
       ],
     },
     {
