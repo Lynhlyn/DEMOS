@@ -61,6 +61,15 @@ public class KhachHangController {
         khachHangRepo.save(khachHang);
         return ResponseEntity.ok("Thêm khách hàng thành công!");
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getKhachHangById(@PathVariable Integer id) {
+        Optional<KhachHang> khachHang = khachHangRepo.findById(id);
+        if (khachHang.isPresent()) {
+            return ResponseEntity.ok(khachHang.get());
+        } else {
+            return ResponseEntity.status(404).body("Khách hàng không tồn tại!");
+        }
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteKhachHang(@PathVariable Integer id) {
@@ -70,7 +79,25 @@ public class KhachHangController {
         khachHangRepo.deleteById(id);
         return ResponseEntity.ok("Xóa khách hàng thành công!");
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateKhachHang(@PathVariable Integer id, @Valid @RequestBody KhachHang khachHang) {
+        Optional<KhachHang> existingKhachHangOpt = khachHangRepo.findById(id);
+        if (existingKhachHangOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Khách hàng không tồn tại!");
+        }
 
+        KhachHang existingKhachHang = existingKhachHangOpt.get();
+        existingKhachHang.setMaKhachHang(khachHang.getMaKhachHang());
+        existingKhachHang.setHoTen(khachHang.getHoTen());
+        existingKhachHang.setTenDangNhap(khachHang.getTenDangNhap());
+        existingKhachHang.setGioiTinh(khachHang.getGioiTinh());
+        existingKhachHang.setEmail(khachHang.getEmail());
+        existingKhachHang.setSoDienThoai(khachHang.getSoDienThoai());
+        existingKhachHang.setTrangThai(khachHang.getTrangThai());
+
+        khachHangRepo.save(existingKhachHang);
+        return ResponseEntity.ok("Cập nhật khách hàng thành công!");
+    }
     private KhachHangResponse mapKhachHangToResponse(KhachHang khachHang) {
         return new KhachHangResponse(
                 khachHang.getId(),

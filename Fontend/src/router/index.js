@@ -52,6 +52,11 @@ const router = createRouter({
           name: 'admin-add-customer',
           component: () => import('../views/Admin/KhachHang/QuanLyKhachHang/AddKhachHang.vue'),
         },
+        {
+          path: 'customers/manage/update-khachhang/:id',
+          name: 'admin-update-customer',
+          component: () => import('../views/Admin/KhachHang/QuanLyKhachHang/UpdateKhachHang.vue'),
+        },
       ],
     },
     {

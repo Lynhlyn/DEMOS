@@ -38,7 +38,7 @@ const validateForm = () => {
         errors.value.matKhau = "Mật khẩu phải có ít nhất 6 ký tự";
     }
     if (!soDienThoai.value || !/^0\d{9}$/.test(soDienThoai.value)) {
-        errors.value.soDienThoai = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số";
+        errors.value.soDienThoai = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 số";
     }
 
     // Trả về true nếu không có lỗi, false nếu có lỗi
