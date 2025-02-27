@@ -57,45 +57,19 @@ const router = createRouter({
           name: 'update-products-details',
           component: () => import('../views/Admin/SanPham/SanPhamChiTiet/UpdateSPCT.vue'),
         },
-        // Voucher
-        // {
-        //   path: 'vouchers',
-        //   name: 'vouchers',
-        //   component: () => import('../views/Admin/Vouchers/VoucherManage.vue'),
-        // },
 
-        // // Nhân viên
-        // {
-        //   path: 'staff',
-        //   name: 'staff',
-        //   component: () => import('../views/Admin/Staff/StaffManage.vue'),
-        // },
+        //  Khach hang
 
-        // // Khách hàng
-        // {
-        //   path: 'customers',
-        //   name: 'customers',
-        //   component: () => import('../views/Admin/Customers/CustomerManage.vue'),
-        // },
-
-        // // Đơn hàng
-        // {
-        //   path: 'orders',
-        //   name: 'orders',
-        //   component: () => import('../views/Admin/Orders/OrderDetails.vue'),
-        // },
-        // {
-        //   path: 'order-details',
-        //   name: 'order-details',
-        //   component: () => import('../views/Admin/Orders/OrderDetails.vue'),
-        // },
-
-        // // Chat hỗ trợ
-        // {
-        //   path: 'chat',
-        //   name: 'chat-support',
-        //   component: () => import('../views/Admin/Chat/ChatSupport.vue'),
-        // },
+        {
+          path: "/admin/customers",
+          name: "customers",
+          component: () => import("../views/Admin/KhachHang/QuanLyKhachHang/KhachHang.vue")
+        },
+        {
+          path: 'customers/manage/add-khachhang',
+          name: 'admin-add-customer',
+          component: () => import('../views/Admin/KhachHang/QuanLyKhachHang/AddKhachHang.vue'),
+        },
       ],
     },
     {
