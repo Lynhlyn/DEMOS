@@ -19,7 +19,11 @@ const fetchKhachHang = async () => {
     try {
         const response = await axios.get(urlKhachHang);
         if (response.data && Array.isArray(response.data)) {
-            khachHangList.value = response.data;
+            khachHangList.value = response.data.map(kh => ({
+                ...kh,
+                ngayTao: kh.ngayTao ? new Date(kh.ngayTao).toLocaleDateString() : "Không có",
+                ngaySua: kh.ngaySua ? new Date(kh.ngaySua).toLocaleDateString() : "Không có"
+            }));
         } else {
             throw new Error("API trả về dữ liệu không hợp lệ");
         }
@@ -105,9 +109,9 @@ onMounted(fetchKhachHang);
                     <th>Giới tính</th>
                     <th>Email</th>
                     <th>Số điện thoại</th>
-                    <th>Trạng thái</th>
                     <th>Ngày tạo</th>
                     <th>Ngày sửa</th>
+                    <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -121,13 +125,13 @@ onMounted(fetchKhachHang);
                     </td>
                     <td>{{ khachHang.email }}</td>
                     <td>{{ khachHang.soDienThoai || 'Không có' }}</td>
+                    <td>{{ khachHang.ngayTao }}</td>
+                    <td>{{ khachHang.ngaySua }}</td>
                     <td class="text-center">
                         <span class="badge" :class="khachHang.trangThai ? 'bg-success' : 'bg-danger'">
                             {{ khachHang.trangThai ? 'Hoạt động' : 'Đã khoá' }}
                         </span>
                     </td>
-                    <td>{{ khachHang.ngayTao }}</td>
-                    <td>{{ khachHang.ngaySua }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-2">
                             <button class="btn btn-warning btn-sm" @click="handleEditKhachHang(khachHang.id)">Sửa</button>

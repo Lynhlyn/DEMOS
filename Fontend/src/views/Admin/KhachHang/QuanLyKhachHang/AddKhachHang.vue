@@ -25,16 +25,26 @@ const errors = ref({});
 // Xử lý lỗi validation
 const validateForm = () => {
     errors.value = {};
+
     if (!maKhachHang.value) errors.value.maKhachHang = "Mã khách hàng không được để trống";
-    if (!tenDangNhap.value) errors.value.tenDangNhap = "Tên đăng nhập không được để trống";
+    if (!tenDangNhap.value || tenDangNhap.value.length < 6) {
+        errors.value.tenDangNhap = "Tên đăng nhập phải có ít nhất 6 ký tự";
+    }
     if (!hoTen.value) errors.value.hoTen = "Họ tên không được để trống";
-    if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) errors.value.email = "Email không hợp lệ";
+    if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        errors.value.email = "Email không hợp lệ";
+    }
     if (!matKhau.value || matKhau.value.length < 6) {
         errors.value.matKhau = "Mật khẩu phải có ít nhất 6 ký tự";
     }
-    if (!soDienThoai.value || !/^\d{10,11}$/.test(soDienThoai.value)) errors.value.soDienThoai = "Số điện thoại không hợp lệ";
+    if (!soDienThoai.value || !/^0\d{9}$/.test(soDienThoai.value)) {
+        errors.value.soDienThoai = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số";
+    }
+
+    // Trả về true nếu không có lỗi, false nếu có lỗi
     return Object.keys(errors.value).length === 0;
 };
+
 
 // Hàm xử lý thêm khách hàng
 const handleAddKhachHang = async () => {
