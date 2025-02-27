@@ -24,7 +24,7 @@ public class SanPhamChiTiet {
     private Integer id;
 
     @NotBlank(message = "Mã sản phẩm chi tiết không được để trống")
-    @Column(name = "ma_spct")
+    @Column(name = "ma_spct", unique = true) // Thêm unique constraint nếu mã sản phẩm phải duy nhất
     private String maSPCT;
 
     @NotNull(message = "Sản phẩm không được để trống")
@@ -48,7 +48,7 @@ public class SanPhamChiTiet {
     private Size size;
 
     @NotNull(message = "Giá bán không được để trống")
-    @Min(value = 0, message = "Giá bán không được nhỏ hơn 0")
+    @Min(value = 1, message = "Giá bán phải lớn hơn 0") // Đổi Min từ 0 thành 1 để tránh giá 0
     @Column(name = "gia_ban")
     private Float giaBan;
 

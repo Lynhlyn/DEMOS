@@ -13,7 +13,10 @@ import com.example.baskend.SanPham.SanPhamChiTiet.repository.SizeRepo;
 import com.example.baskend.SanPham.SanPhamChiTiet.response.SanPhamChiTietResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +47,37 @@ public class SanPhamChiTietController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responseList);
+    }
+    @GetMapping("/san-pham")
+    public ResponseEntity<List<SanPham>> getSanPhamList() {
+        return ResponseEntity.ok(sanPhamRepo.findAll());
+    }
+
+    @GetMapping("/mau-sac")
+    public ResponseEntity<List<MauSac>> getMauSacList() {
+        return ResponseEntity.ok(mauSacRepo.findAll());
+    }
+
+    @GetMapping("/khuyen-mai")
+    public ResponseEntity<List<KhuyenMai>> getKhuyenMaiList() {
+        return ResponseEntity.ok(khuyenMaiRepo.findAll());
+    }
+
+    @GetMapping("/size")
+    public ResponseEntity<List<Size>> getSizeList() {
+        return ResponseEntity.ok(sizeRepo.findAll());
+    }
+
+    // API lấy thông tin sản phẩm chi tiết (bao gồm dữ liệu liên quan)
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSanPhamChiTietById(@PathVariable Integer id) {
+        Optional<SanPhamChiTiet> optionalSPCT = sanPhamChiTietRepo.findById(id);
+        if (optionalSPCT.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        SanPhamChiTiet spct = optionalSPCT.get();
+        return ResponseEntity.ok(spct);
     }
 
     @PostMapping("/add-spct")
@@ -77,56 +111,24 @@ public class SanPhamChiTietController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSanPhamChiTiet(@PathVariable Integer id, @Valid @RequestBody SanPhamChiTiet sanPhamChiTiet) {
-        Optional<SanPhamChiTiet> existingSPCTOpt = sanPhamChiTietRepo.findById(id);
-        if (existingSPCTOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("Sản phẩm chi tiết không tồn tại!");
+    public ResponseEntity<?> updateSanPhamChiTiet(@PathVariable Integer id, @RequestBody SanPhamChiTiet updatedSPCT) {
+        Optional<SanPhamChiTiet> optionalSPCT = sanPhamChiTietRepo.findById(id);
+        if (optionalSPCT.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
 
-        SanPhamChiTiet existingSPCT = existingSPCTOpt.get();
+        SanPhamChiTiet spct = optionalSPCT.get();
+        spct.setMaSPCT(updatedSPCT.getMaSPCT());
+        spct.setSanPham(updatedSPCT.getSanPham());
+        spct.setMauSac(updatedSPCT.getMauSac());
+        spct.setKhuyenMai(updatedSPCT.getKhuyenMai());
+        spct.setSize(updatedSPCT.getSize());
+        spct.setGiaBan(updatedSPCT.getGiaBan());
+        spct.setSoLuong(updatedSPCT.getSoLuong());
+        spct.setTrangThai(updatedSPCT.getTrangThai());
 
-        if (sanPhamChiTiet.getGiaBan() <= 0 || sanPhamChiTiet.getSoLuong() < 0) {
-            return ResponseEntity.badRequest().body("Giá bán phải lớn hơn 0, số lượng không được âm!");
-        }
-
-        existingSPCT.setMauSac(sanPhamChiTiet.getMauSac());
-        existingSPCT.setKhuyenMai(sanPhamChiTiet.getKhuyenMai());
-        existingSPCT.setSize(sanPhamChiTiet.getSize());
-        existingSPCT.setGiaBan(sanPhamChiTiet.getGiaBan());
-        existingSPCT.setSoLuong(sanPhamChiTiet.getSoLuong());
-        existingSPCT.setTrangThai(sanPhamChiTiet.getTrangThai());
-
-        sanPhamChiTietRepo.save(existingSPCT);
-        return ResponseEntity.ok("Cập nhật sản phẩm chi tiết thành công!");
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSanPhamChiTiet(@PathVariable Integer id) {
-        if (!sanPhamChiTietRepo.existsById(id)) {
-            return ResponseEntity.badRequest().body("Sản phẩm chi tiết không tồn tại!");
-        }
-        sanPhamChiTietRepo.deleteById(id);
-        return ResponseEntity.ok("Xóa sản phẩm chi tiết thành công!");
-    }
-
-    @GetMapping("/san-pham")
-    public List<SanPham> getAllSanPham() {
-        return sanPhamRepo.findAll();
-    }
-
-    @GetMapping("/mau-sac")
-    public List<MauSac> getAllMauSac() {
-        return mauSacRepo.findAll();
-    }
-
-    @GetMapping("/khuyen-mai")
-    public List<KhuyenMai> getAllKhuyenMai() {
-        return khuyenMaiRepo.findAll();
-    }
-
-    @GetMapping("/size")
-    public List<Size> getAllSize() {
-        return sizeRepo.findAll();
+        sanPhamChiTietRepo.save(spct);
+        return ResponseEntity.ok("Cập nhật thành công!");
     }
 
     private SanPhamChiTietResponse mapToResponse(SanPhamChiTiet spct) {

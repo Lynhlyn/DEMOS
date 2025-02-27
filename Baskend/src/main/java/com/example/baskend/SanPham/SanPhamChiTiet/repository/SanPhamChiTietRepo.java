@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface SanPhamChiTietRepo extends JpaRepository<SanPhamChiTiet, Integer> {
 
-    @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham IS NOT NULL AND LOWER(sp.sanPham.tenSanPham) LIKE LOWER(CONCAT('%', :tenSanPham, '%'))")
+    @Query("SELECT sp FROM SanPhamChiTiet sp WHERE sp.sanPham.tenSanPham IS NOT NULL AND LOWER(sp.sanPham.tenSanPham) LIKE LOWER(CONCAT('%', :tenSanPham, '%'))")
     List<SanPhamChiTiet> searchByTenSanPham(@Param("tenSanPham") String tenSanPham);
 }
 
