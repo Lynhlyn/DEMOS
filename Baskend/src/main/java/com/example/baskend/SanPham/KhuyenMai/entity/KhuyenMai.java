@@ -1,4 +1,4 @@
-package com.example.baskend.SanPham.SanPhamChiTiet.entity;
+package com.example.baskend.SanPham.KhuyenMai.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

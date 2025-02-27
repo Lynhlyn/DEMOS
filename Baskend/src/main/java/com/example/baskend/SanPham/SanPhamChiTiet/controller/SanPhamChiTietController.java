@@ -2,11 +2,11 @@ package com.example.baskend.SanPham.SanPhamChiTiet.controller;
 
 import com.example.baskend.SanPham.QuanLySanPham.entity.SanPham;
 import com.example.baskend.SanPham.QuanLySanPham.repository.SanPhamRepo;
-import com.example.baskend.SanPham.SanPhamChiTiet.entity.KhuyenMai;
+import com.example.baskend.SanPham.KhuyenMai.entity.KhuyenMai;
 import com.example.baskend.SanPham.SanPhamChiTiet.entity.MauSac;
 import com.example.baskend.SanPham.SanPhamChiTiet.entity.SanPhamChiTiet;
 import com.example.baskend.SanPham.SanPhamChiTiet.entity.Size;
-import com.example.baskend.SanPham.SanPhamChiTiet.repository.KhuyenMaiRepo;
+import com.example.baskend.SanPham.KhuyenMai.repository.KhuyenMaiRepo;
 import com.example.baskend.SanPham.SanPhamChiTiet.repository.MauSacRepo;
 import com.example.baskend.SanPham.SanPhamChiTiet.repository.SanPhamChiTietRepo;
 import com.example.baskend.SanPham.SanPhamChiTiet.repository.SizeRepo;

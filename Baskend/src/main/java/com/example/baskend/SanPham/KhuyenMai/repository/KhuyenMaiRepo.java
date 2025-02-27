@@ -1,6 +1,6 @@
-package com.example.baskend.SanPham.SanPhamChiTiet.repository;
+package com.example.baskend.SanPham.KhuyenMai.repository;
 
-import com.example.baskend.SanPham.SanPhamChiTiet.entity.KhuyenMai;
+import com.example.baskend.SanPham.KhuyenMai.entity.KhuyenMai;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
